@@ -13,6 +13,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -20,7 +21,6 @@ import Animated, {
   withDecay,
   useAnimatedReaction,
   runOnJS,
-  withSpring,
   cancelAnimation,
 } from 'react-native-reanimated';
 import {
@@ -132,13 +132,7 @@ type Props<T> = EventsCallbacks & {
   setRef: (index: number, value: ItemRef) => void;
 };
 
-const springConfig = {
-  damping: 800,
-  mass: 1,
-  stiffness: 250,
-  restDisplacementThreshold: 0.02,
-  restSpeedThreshold: 4,
-};
+const translateXEasing = Easing.bezier(0.1, 0.45, 0.25, 1);
 
 type ItemRef = { reset: (animated: boolean) => void };
 
@@ -237,9 +231,9 @@ const ResizableImage = React.memo(
       'worklet';
 
       scale.value = animated ? withTiming(1) : 1;
-      offset.x.value = animated ? withTiming(0) : 0;
+      offset.x.value = animated ? withTiming(0, { easing: translateXEasing }) : 0;
       offset.y.value = animated ? withTiming(0) : 0;
-      translation.x.value = animated ? withTiming(0) : 0;
+      translation.x.value = animated ? withTiming(0, { easing: translateXEasing }) : 0;
       translation.y.value = animated ? withTiming(0) : 0;
     };
 
@@ -456,22 +450,23 @@ const ResizableImage = React.memo(
           }
 
           if (newWidth <= width) {
-            translation.x.value = withTiming(0);
+            translation.x.value = withTiming(0, { easing: translateXEasing });
           } else {
             let moved;
             if (diffX > 0) {
-              translation.x.value = withTiming(nextTransX - diffX);
+              translation.x.value = withTiming(nextTransX - diffX, { easing: translateXEasing });
               moved = true;
             }
 
             if (newWidth + diffX < width) {
               translation.x.value = withTiming(
-                nextTransX + width - (newWidth + diffX)
+                nextTransX + width - (newWidth + diffX),
+                { easing: translateXEasing }
               );
               moved = true;
             }
             if (!moved) {
-              translation.x.value = withTiming(nextTransX);
+              translation.x.value = withTiming(nextTransX, { easing: translateXEasing });
             }
           }
 
@@ -701,7 +696,7 @@ const ResizableImage = React.memo(
             }
           }
 
-          translateX.value = withSpring(snapTo, springConfig);
+          translateX.value = withTiming(snapTo, { duration: 650, easing: translateXEasing });
         } else {
           const newWidth = scale.value * layout.x.value;
 
@@ -808,7 +803,8 @@ const ResizableImage = React.memo(
               adjustedFocal.x.value +
                 -1 * doubleTapScale * adjustedFocal.x.value,
               doubleTapScale
-            )
+            ),
+            { easing: translateXEasing }
           );
           offset.y.value = withTiming(
             clampY(
@@ -1009,9 +1005,9 @@ const GalleryComponent = <T extends any>(
       setIndex(newIndex);
       currentIndex.value = newIndex;
       if (animated) {
-        translateX.value = withSpring(
+        translateX.value = withTiming(
           newIndex * -(dimensions.width + emptySpaceWidth),
-          springConfig
+          { duration: 400, easing: translateXEasing }
         );
       } else {
         translateX.value = newIndex * -(dimensions.width + emptySpaceWidth);
