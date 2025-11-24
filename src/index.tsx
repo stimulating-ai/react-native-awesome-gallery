@@ -231,9 +231,9 @@ const ResizableImage = React.memo(
       'worklet';
 
       scale.value = animated ? withTiming(1) : 1;
-      offset.x.value = animated ? withTiming(0, { easing: translateXEasing }) : 0;
+      offset.x.value = animated ? withTiming(0) : 0;
       offset.y.value = animated ? withTiming(0) : 0;
-      translation.x.value = animated ? withTiming(0, { easing: translateXEasing }) : 0;
+      translation.x.value = animated ? withTiming(0) : 0;
       translation.y.value = animated ? withTiming(0) : 0;
     };
 
@@ -450,23 +450,22 @@ const ResizableImage = React.memo(
           }
 
           if (newWidth <= width) {
-            translation.x.value = withTiming(0, { easing: translateXEasing });
+            translation.x.value = withTiming(0);
           } else {
             let moved;
             if (diffX > 0) {
-              translation.x.value = withTiming(nextTransX - diffX, { easing: translateXEasing });
+              translation.x.value = withTiming(nextTransX - diffX);
               moved = true;
             }
 
             if (newWidth + diffX < width) {
               translation.x.value = withTiming(
-                nextTransX + width - (newWidth + diffX),
-                { easing: translateXEasing }
+                nextTransX + width - (newWidth + diffX)
               );
               moved = true;
             }
             if (!moved) {
-              translation.x.value = withTiming(nextTransX, { easing: translateXEasing });
+              translation.x.value = withTiming(nextTransX);
             }
           }
 
@@ -803,8 +802,7 @@ const ResizableImage = React.memo(
               adjustedFocal.x.value +
                 -1 * doubleTapScale * adjustedFocal.x.value,
               doubleTapScale
-            ),
-            { easing: translateXEasing }
+            )
           );
           offset.y.value = withTiming(
             clampY(
@@ -1007,7 +1005,7 @@ const GalleryComponent = <T extends any>(
       if (animated) {
         translateX.value = withTiming(
           newIndex * -(dimensions.width + emptySpaceWidth),
-          { duration: 400, easing: translateXEasing }
+          { duration: 650, easing: translateXEasing }
         );
       } else {
         translateX.value = newIndex * -(dimensions.width + emptySpaceWidth);
