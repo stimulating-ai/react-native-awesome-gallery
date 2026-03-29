@@ -9,6 +9,7 @@ import {
   I18nManager,
   Image,
   StyleSheet,
+  View,
   useWindowDimensions,
   ViewStyle,
 } from 'react-native';
@@ -26,7 +27,6 @@ import Animated, {
 import {
   Gesture,
   GestureDetector,
-  GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import {
   clamp,
@@ -1033,7 +1033,7 @@ const GalleryComponent = <T extends any>(
   }, [data?.length, dimensions.width]);
 
   return (
-    <GestureHandlerRootView style={[styles.container, style]}>
+    <View style={[styles.container, style]}>
       <Animated.View style={[styles.rowContainer, animatedStyle]}>
         {data.map((item: any, i) => {
           const isFirst = i === 0;
@@ -1089,7 +1089,7 @@ const GalleryComponent = <T extends any>(
           );
         })}
       </Animated.View>
-    </GestureHandlerRootView>
+    </View>
   );
 };
 
