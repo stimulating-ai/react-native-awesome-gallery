@@ -14,6 +14,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -21,7 +22,6 @@ import Animated, {
   withDecay,
   useAnimatedReaction,
   runOnJS,
-  withSpring,
   cancelAnimation,
 } from 'react-native-reanimated';
 import {
@@ -132,13 +132,7 @@ type Props<T> = EventsCallbacks & {
   setRef: (index: number, value: ItemRef) => void;
 };
 
-const springConfig = {
-  damping: 800,
-  mass: 1,
-  stiffness: 250,
-  restDisplacementThreshold: 0.02,
-  restSpeedThreshold: 4,
-};
+const translateXEasing = Easing.bezier(0.1, 0.45, 0.25, 1);
 
 type ItemRef = { reset: (animated: boolean) => void };
 
@@ -701,7 +695,7 @@ const ResizableImage = React.memo(
             }
           }
 
-          translateX.value = withSpring(snapTo, springConfig);
+          translateX.value = withTiming(snapTo, { duration: 650, easing: translateXEasing });
         } else {
           const newWidth = scale.value * layout.x.value;
 
@@ -1009,9 +1003,9 @@ const GalleryComponent = <T extends any>(
       setIndex(newIndex);
       currentIndex.value = newIndex;
       if (animated) {
-        translateX.value = withSpring(
+        translateX.value = withTiming(
           newIndex * -(dimensions.width + emptySpaceWidth),
-          springConfig
+          { duration: 650, easing: translateXEasing }
         );
       } else {
         translateX.value = newIndex * -(dimensions.width + emptySpaceWidth);
