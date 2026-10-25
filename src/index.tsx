@@ -289,6 +289,9 @@ const ResizableImage = React.memo(
     const onStart = () => {
       'worklet';
 
+      // Freeze zoom before calculating pan offsets and release bounds.
+      cancelAnimation(scale);
+      scale.value = clamp(scale.value, 1, maxScale);
       cancelAnimation(translateX);
 
       offset.x.value = offset.x.value + translation.x.value;
